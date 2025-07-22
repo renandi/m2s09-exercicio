@@ -1,0 +1,58 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  color: black;
+  background-color: aliceblue;
+  height: 100%;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 0;
+  padding-top: 20px;
+}
+
+p {
+  text-align: center;
+}
+
+h3 {
+  margin: 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+  margin: 0 auto;
+  width: 50%;
+  background-color: white;
+  padding: 50px;
+  border-radius: 10px;
+  border: green 1px solid;
+}
+
+form label {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+form input, form select {
+  height: 30px;
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+}
+
+form button {
+  margin-top: 40px;
+  height: 50px;
+  width: 50%;
+  align-self: center;
+  background-color: rgb(85, 172, 118);
+  color: black;
+  font-weight: bold;
+  
+  border-radius: 10px;
+}
