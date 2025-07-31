@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 // import viteLogo from '/vite.svg'
 import './App.css'
 import { Bounce, ToastContainer, toast } from 'react-toastify';
+import PostList from './PostList';
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -10,19 +11,20 @@ function App() {
   const [description, setDescription] = useState("");
   const [imgURL, setImgURL] = useState("");
   const [date, setDate] = useState("")
-  const [category, setCategory] = useState("article");
+  const [category, setCategory] = useState("");
   const [postCount, setPostCount] = useState(0);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const postList = JSON.parse(localStorage.getItem("postList") || "[]");
-    setPostCount(Array.isArray(postList) ? postList.length : 0);
+    const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+    setPosts(storedPosts);
+    setPostCount(Array.isArray(storedPosts) ? storedPosts.length : 0);
   }, []);
-
 
   function publish(event) {
 
     event.preventDefault();
-    
+
     if (title === "") {
       toast.error("Título não pode ser vazio!");
       return;
@@ -38,8 +40,13 @@ function App() {
       return;
     }
 
-    if (date ==="") {
+    if (date === "") {
       toast.error("Data de publicação deve ser informada!")
+      return;
+    }
+
+    if (!category) {
+      toast.error("Selecione uma categoria!");
       return;
     }
 
@@ -56,33 +63,50 @@ function App() {
       return;
     }
 
+    const postList = JSON.parse(localStorage.getItem("posts") || "[]");
+
+    const lastId = posts.length > 0 ? Math.max(...posts.map((p: any) => p.id)) : 0;
+    const newId = lastId + 1;
+
     const post = {
-      title: title,
-      description: description,
-      imgURL: imgURL,
-      date: date,
-      category: category
+      id: newId,
+      titulo: title,
+      descricao: description,
+      capa: imgURL,
+      data: date,
+      tipo: category
     }
 
     console.log(post);
 
-    const postList = JSON.parse(localStorage.getItem("postList") || "[]");
     postList.push(post);
-    localStorage.setItem("postList", JSON.stringify(postList));
+    localStorage.setItem("posts", JSON.stringify(postList));
+    setPosts(postList);
     toast.success("Post salvo com sucesso!")
     setPostCount(postList.length);
 
   }
-  
-  // function getPostCount() {
-  //   const postList = JSON.parse(localStorage.getItem("postList") || "[]");
-  //   setPostCount(postList.lenght);
-  // }
+
 
   return (
     <>
+      <PostList posts={posts} />
       <h1>Painel de Gerenciamento</h1>
       <p>Atualmente você tem {postCount} posts cadastrados</p>
+      {posts.filter((p) => p.tipo.toLowerCase() == "artigo").length > 0 && (
+        <p>{posts.filter((p) => p.tipo.toLowerCase() == "artigo").length} artigos</p>
+      )}
+
+      {posts.filter((p) => p.tipo.toLowerCase() == "notícia").length > 0 && (
+        <p>{posts.filter((p) => p.tipo.toLowerCase() == "notícia").length} Notícias</p>
+      )}
+
+      {posts.filter((p) => p.tipo.toLowerCase() == "tutorial").length > 0 && (
+        <p>{posts.filter((p) => p.tipo.toLowerCase() == "tutorial").length} Tutoriais</p>
+      )}
+      {posts.filter((p) => p.tipo.toLowerCase() == "entrevista").length > 0 && (
+      <p>{posts.filter((p) => p.tipo.toLowerCase() == "entrevista").length} Entrevista</p>
+      )}
       <form action="">
         <h3>Novo Post</h3>
         <label htmlFor="title">Título</label>
@@ -121,10 +145,11 @@ function App() {
           id="categoria"
           value={category}
           onChange={(e) => setCategory(e.target.value)}>
-          <option value="article">Artigo</option>
-          <option value="news">Notícia</option>
+          <option value="">Selecione a categoria</option>
+          <option value="artigo">Artigo</option>
+          <option value="notícia">Notícia</option>
           <option value="tutorial">Tutorial</option>
-          <option value="interview">Entrevista</option>
+          <option value="entrevista">Entrevista</option>
         </select>
 
         <button onClick={publish}>Publicar</button>
